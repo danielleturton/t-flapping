@@ -9,6 +9,9 @@ data_figs = data_clean
 ggplot(data_clean, aes(x = Position, fill = tvar)) +
   geom_bar(position = "fill") + facet_wrap(~File)
 
+ggplot(data_clean, aes(x = vowel_length, fill = tvar)) +
+  geom_bar(position = "fill") 
+
 
 flap_fig_intervocalic = data_clean %>%
   filter(Position == "Internal") %>%
