@@ -8,7 +8,7 @@ setwd("data/")
 setwd("~/Dropbox/Projects/Blackburn/tflap/tflap_R")
 
 ## UNWANTED WORDS
-unwantedwords = c("HOTEL", "HOTELS", "SETTEE", "SETTEES", "EIGHTEENTH")
+unwantedwords = c("HOTEL", "HOTELS", "SETTEE", "SETTEES", "EIGHTEENTH", "AUTISM")
 
 ## WORDS TO CHANGE CATEGORY
 #checking which words have Preceding AA
