@@ -24,7 +24,7 @@ aawords = c("TOMATO", "TOMATOES", "*TOMATOEY")
 #data = arrange(data, Code1)
 
 ## Social data ####
-social = read.delim("/Users/danielle/Dropbox/Projects/Blackburn/Data/social_Nov17.csv")
+social = read.delim("/Users/danielle/Dropbox/Projects/Blackburn/Data/social_Nov17.txt")
 
 ## CLEAN DATA ####
 data_clean = data %>%
@@ -36,6 +36,6 @@ data_clean = data %>%
   mutate(vowel_length = ifelse(Word %in% aawords, "long", as.character(vowel_length))) %>%
   left_join(social) %>%  
   mutate(duration = Seg_End - Seg_Start) %>% 
-  select(24, 21, 25:30, 3, 5, 11, 22, 14, 8, 39, 18)
+  select(24, 1, 21, 25:30, 3, 5, 11, 22, 14, 8, 31, 18)
   
 
