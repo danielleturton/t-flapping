@@ -7,8 +7,13 @@ setwd("data/")
   data = do.call(rbind,lapply(file_names,read.delim))
 setwd("~/Dropbox/Projects/Blackburn/tflap/tflap_R")
 
-## UNWANTED WORDS
-unwantedwords = c("HOTEL", "HOTELS", "SETTEE", "SETTEES", "EIGHTEENTH", "AUTISM")
+## WORDS TO CHANGE ####
+#unwanted words (stress etc)
+unwantedwords = c("AUTISM", "DETAILS", "EIGHTEENTH", "EIGHTEEN", "HOTEL", "HOTELS", "POLITICS", "SETTEE", "SETTEES", "LUNATIC")
+
+#syllabic words - different condioning, maybe delete
+#more likely flaps before /l/, glottals before /n/?
+syllabicwords = c("COTTON", "BUTTON", "LITTLE", "BOTTLE", "RAWTENSTALL", "BRIGHTON")
 
 ## WORDS TO CHANGE CATEGORY
 #checking which words have Preceding AA
