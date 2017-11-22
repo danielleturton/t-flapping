@@ -36,6 +36,10 @@ data_clean = data %>%
   mutate(vowel_length = ifelse(Word %in% aawords, "long", as.character(vowel_length))) %>%
   left_join(social) %>%  
   mutate(duration = Seg_End - Seg_Start) %>% 
-  select(24, 1, 21, 25:30, 3, 5, 11, 22, 14, 8, 31, 18)
+  select(24, 1, 21, 25:30, 3, 5, 11, 22, 14, 8, 31, 18, "Seg_Start") %>%
+  mutate(AgeGroup = ifelse(Age < 34, "younger", "older"))
   
 
+#checking out flaps after long vowels:
+filter(data_clean, vowel_length == "long" & tvar == "flap") %>%
+  select(Speaker, Word, Seg_Start)
