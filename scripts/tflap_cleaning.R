@@ -37,7 +37,9 @@ data_clean = data %>%
   left_join(social) %>%  
   mutate(duration = Seg_End - Seg_Start) %>% 
   select(24, 1, 21, 25:30, 3, 5, 11, 22, 14, 8, 31, 18, "Seg_Start") %>%
-  mutate(AgeGroup = ifelse(Age < 34, "younger", "older"))
+  mutate(AgeGroup = ifelse(Age < 34, "younger", "older")) %>%
+  mutate(morphClass = factor(Code2, labels = c(NA, "bimorphemic", "monomorphemic"))) %>%
+  mutate(context = ifelse(Position == "End", "word-final prevoc", as.character(morphClass)))
   
 
 #checking out flaps after long vowels:
