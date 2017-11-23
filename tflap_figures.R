@@ -7,9 +7,9 @@ theme_set(theme_bw(base_size = 14))
 data_figs = data_clean %>%
   mutate(vowel_length = factor(vowel_length, levels=c("short", "long"))) %>%
   mutate(AgeGroup = factor(AgeGroup, levels=c("younger", "older"))) %>%
+  mutate(context = factor(context, levels=c("word-final prevoc", "bimorphemic", "monomorphemic")))
   #mutate(tvar = factor(tvar, levels=c("t", "glottal", "flap"))) %>%
   # if you want flap as bottom colour
-  mutate(morphClass = factor(Code2, labels = c(NA, "bimorphemic", "monomorphemic")))
 
 
 ## CURRENT GRAPHS TO RUN ####
@@ -69,6 +69,52 @@ pdf("figures/morph_flap.pdf")
 morph_tflap.plot
 dev.off()
 
+# stem/word/phrase zooming in on tflap
+data_figs_swp_tflap = 
+  data_figs %>%
+  group_by(context, Speaker, tvar) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  group_by(tvar, context) %>%
+  summarise(freq = mean(freq)) %>%
+  filter(tvar == "flap")
+
+swp_tflap.plot = 
+  data_figs_swp_tflap %>%
+  mutate(context = factor(context, labels=c("get out", "getting", "better"))) %>%
+  ggplot(aes(x = context, y = freq*100)) +
+  geom_bar(stat = "identity", fill = "#E41A1C")  + 
+  ylab("% flap") +
+  xlab("") +
+  ylim(0, 100)
+
+pdf("figures/swp_flap.pdf")
+swp_tflap.plot
+dev.off()
+
+# stem/word/phrase zooming in on glottal
+data_figs_swp_glottal = 
+  data_figs %>%
+  group_by(context, Speaker, tvar) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  group_by(tvar, context) %>%
+  summarise(freq = mean(freq)) %>%
+  filter(tvar == "glottal")
+
+swp_glottal.plot = 
+  data_figs_swp_glottal %>%
+  mutate(context = factor(context, labels=c("get out", "getting", "better"))) %>%
+  ggplot(aes(x = context, y = freq*100)) +
+  geom_bar(stat = "identity", fill = "#377EB8")  + 
+  ylab("% glottal") +
+  xlab("") +
+  ylim(0, 100)
+
+pdf("figures/swp_flap.pdf")
+swp_glottal.plot
+dev.off()
+
 ## SOCIAL PLOTS ####
 age.plot =
   ggplot(data_figs, aes(x = AgeGroup, fill = tvar)) +
@@ -82,6 +128,16 @@ age.plot =
 pdf("figures/age_flap.pdf")
 age.plot
 dev.off()
+
+#age.sex.plot =
+  ggplot(data_figs, aes(x = AgeGroup, fill = tvar)) +
+  geom_bar(position = "fill") +
+  facet_wrap(~Gender) +
+  ylab("") +
+  xlab("age group") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(legend.title=element_blank(), legend.position="bottom")
 
 #messing
 data_figs_age = data_figs %>%
@@ -122,6 +178,9 @@ intervocalic.position = data_clean %>%
   theme(legend.title=element_blank(), legend.position="top")
 
 
+ggplot(data_figs, aes(x = context, fill = tvar)) +
+  geom_bar(position = "fill") +
+  scale_fill_brewer(palette = "Set1") +facet_wrap(~AgeGroup)
 
 ##  TRYING TO AVERAGE OVER SPEAKER AND WORD
 #this was Joe's solution
