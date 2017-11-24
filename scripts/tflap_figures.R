@@ -2,12 +2,13 @@
 library(ggplot2)
 library(dplyr)
 
-theme_set(theme_bw(base_size = 14))
+theme_set(theme_bw(base_size = 18))
 
 data_figs = data_clean %>%
   mutate(vowel_length = factor(vowel_length, levels=c("short", "long"))) %>%
   mutate(AgeGroup = factor(AgeGroup, levels=c("younger", "older"))) %>%
-  mutate(context = factor(context, levels=c("word-final prevoc", "bimorphemic", "monomorphemic")))
+  mutate(context = factor(context, levels=c("word-final prevoc", "bimorphemic", "monomorphemic")))  %>%
+  mutate(context = factor(context, labels=c("get in", "getting", "better")))
   #mutate(tvar = factor(tvar, levels=c("t", "glottal", "flap"))) %>%
   # if you want flap as bottom colour
 
@@ -81,7 +82,7 @@ data_figs_swp_tflap =
 
 swp_tflap.plot = 
   data_figs_swp_tflap %>%
-  mutate(context = factor(context, labels=c("get out", "getting", "better"))) %>%
+  #mutate(context = factor(context, labels=c("get in", "getting", "better"))) %>%
   ggplot(aes(x = context, y = freq*100)) +
   geom_bar(stat = "identity", fill = "#E41A1C")  + 
   ylab("% flap") +
@@ -102,17 +103,55 @@ data_figs_swp_glottal =
   summarise(freq = mean(freq)) %>%
   filter(tvar == "glottal")
 
+data_figs_swp_glottal_spk = 
+  data_figs %>%
+  group_by(context, Speaker, tvar) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  #group_by(tvar, context) %>%
+  #summarise(freq = mean(freq)) %>%
+  filter(tvar == "glottal")
+
+swp_glottal.plot_spk = 
+  data_figs_swp_glottal_spk %>%
+  ggplot(aes(x = context, y = freq*100)) +
+  facet_wrap(~Speaker) +
+  geom_bar(stat = "identity", fill = "#377EB8")  + 
+  ylab("% glottal") +
+  xlab("") +
+  ylim(0, 100)
+
+pdf("figures/swp_flap_spk.pdf")
+swp_glottal.plot_spk
+dev.off()
+
 swp_glottal.plot = 
   data_figs_swp_glottal %>%
-  mutate(context = factor(context, labels=c("get out", "getting", "better"))) %>%
+  #mutate(context = factor(context, labels=c("get out", "getting", "better"))) %>%
   ggplot(aes(x = context, y = freq*100)) +
   geom_bar(stat = "identity", fill = "#377EB8")  + 
   ylab("% glottal") +
   xlab("") +
   ylim(0, 100)
 
-pdf("figures/swp_flap.pdf")
+pdf("figures/swp_glottal.pdf")
 swp_glottal.plot
+dev.off()
+
+context_swp.plot = 
+  data_figs %>%
+  filter(!is.na(context)) %>%
+  ggplot(aes(x = context, fill = tvar)) +
+  geom_bar(position = "fill") +
+  ylab("") +
+  xlab("context") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(legend.title=element_blank(), legend.position="bottom")
+# this looks different in flaps to when we summarise by speaker, as there must be an influential speaker in the 'better' flaps. So this one isn't exactly the bewst 
+
+pdf("figures/context_swp.pdf")
+context_swp.plot
 dev.off()
 
 ## SOCIAL PLOTS ####
