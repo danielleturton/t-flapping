@@ -13,7 +13,9 @@ unwantedwords = c("AUTISM", "DETAILS", "EIGHTEENTH", "EIGHTEEN", "HOTEL", "HOTEL
 
 #syllabic words - different condioning, maybe delete
 #more likely flaps before /l/, glottals before /n/?
-syllabicwords = c("COTTON", "BUTTON", "LITTLE", "BOTTLE", "RAWTENSTALL", "BRIGHTON")
+syllabicwords = c("COTTON", "BUTTON", "BUTTONS", "LITTLE", "BOTTLE", "BOTTLEMEN", "RAWTENSTALL", "BRIGHTON", "((BUTTONS))")
+syllabicnwords = c("COTTON", "BUTTON", "BUTTONS", "RAWTENSTALL", "BRIGHTON", "((BUTTONS))")
+syllabiclwords = c("LITTLE", "BOTTLE", "BOTTLEMEN")
 
 ## WORDS TO CHANGE CATEGORY
 #checking which words have Preceding AA
@@ -32,6 +34,7 @@ data_clean = data %>%
   mutate(tvar = factor(tvar, labels=c(NA, "deleted", "flap", "glottal", "t", "?", "tlat", "t-to-r"))) %>%
   filter(tvar == "flap" | tvar == "glottal" | tvar == "t") %>%
   filter(!Word %in% unwantedwords)%>%
+  filter(!Word %in% syllabicnwords)%>%
   mutate(vowel_length = recode(Pre_Seg, "AA" = "short", "AE" = "short", "AH" = "short", "AO" = "long", "AW" = "long", "AY" = "long",  "EH" = "short", "EY" = "long", "IH" = "short", "IY" = "long",  "OW" = "long",  "UH" = "short", "UW" = "long")) %>%
   mutate(vowel_length = ifelse(Word %in% aawords, "long", as.character(vowel_length))) %>%
   left_join(social) %>%  
