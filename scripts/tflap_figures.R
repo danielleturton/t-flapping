@@ -2,7 +2,7 @@
 library(ggplot2)
 library(dplyr)
 
-theme_set(theme_bw(base_size = 18))
+theme_set(theme_bw(base_size = 20))
 
 data_figs = data_clean %>%
   mutate(vowel_length = factor(vowel_length, levels=c("short", "long"))) %>%
@@ -30,6 +30,22 @@ vowel_length.plot
 dev.off()
 
 # preceding vowel, greyed out
+#preceding vowel length
+vowel_length_grey.plot = 
+  ggplot(data_figs) +
+  geom_bar(aes(x = vowel_length, fill = tvar),  position = "fill")+
+  geom_bar(aes(x = vowel_length, group = tvar), 
+           fill = c(paste0("grey", 7:9*10),
+           paste0("grey", 8:9*10), "#E41A1C"), position = "fill") +
+  ylab("") +
+  xlab("vowel length") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(legend.title=element_blank(), legend.position="bottom")
+
+pdf("figures/vowel_length_flap_grey.pdf")
+vowel_length_grey.plot
+dev.off()
 
 position.plot = 
 data_figs %>%
@@ -165,6 +181,10 @@ age.plot =
   theme(legend.title=element_blank(), legend.position="bottom")
 
 pdf("figures/age_flap.pdf")
+age.plot
+dev.off()
+
+pdf("figures/age_flap_wide.pdf", width = 6, height = 4)
 age.plot
 dev.off()
 
