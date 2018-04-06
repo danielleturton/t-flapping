@@ -29,6 +29,8 @@ pdf("figures/vowel_length_flap.pdf")
 vowel_length.plot
 dev.off()
 
+
+
 # preceding vowel, greyed out
 #preceding vowel length
 vowel_length_grey.plot = 
@@ -47,6 +49,23 @@ pdf("figures/vowel_length_flap_grey.pdf")
 vowel_length_grey.plot
 dev.off()
 
+#age & preceding vowel length
+vowel_length_age.plot = 
+  data_figs %>%
+  ggplot(aes(x = vowel_length, fill = tvar)) +
+  geom_bar(position = "fill") +
+  ylab("") +
+  xlab("vowel length") +
+  facet_wrap(~AgeGroup) +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(legend.title=element_blank(), legend.position="bottom")
+
+pdf("figures/vowel_length_age.pdf")
+vowel_length_age.plot
+dev.off()
+
+# position
 position.plot = 
 data_figs %>%
   mutate(Position = factor(Position, levels=c("Internal", "End"))) %>%
@@ -60,6 +79,22 @@ data_figs %>%
 
 pdf("figures/position_flap.pdf")
 position.plot
+dev.off()
+
+position_age.plot = 
+  data_figs %>%
+  mutate(Position = factor(Position, levels=c("Internal", "End"))) %>%
+  ggplot(aes(x = Position, fill = tvar)) +
+  geom_bar(position = "fill") +
+  ylab("") +
+  xlab("word position") +
+  facet_wrap(~AgeGroup) +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent) +
+  theme(legend.title=element_blank(), legend.position="bottom")
+
+pdf("figures/position_age.pdf", width = 8)
+position_age.plot
 dev.off()
 
 # morphological class zooming in on tflap
@@ -109,9 +144,20 @@ pdf("figures/swp_flap.pdf")
 swp_tflap.plot
 dev.off()
 
+
 # stem/word/phrase zooming in on glottal
 data_figs_swp_glottal = 
   data_figs %>%
+  group_by(context, Speaker, tvar) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  group_by(tvar, context) %>%
+  summarise(freq = mean(freq)) %>%
+  filter(tvar == "glottal")
+
+data_figs_swp_glottal_shortvowel = 
+  data_figs %>%
+  filter(vowel_length == "short") %>%
   group_by(context, Speaker, tvar) %>%
   summarise (n = n()) %>%
   mutate(freq = n / sum(n)) %>%
@@ -170,6 +216,18 @@ pdf("figures/context_swp.pdf")
 context_swp.plot
 dev.off()
 
+context_swp_shortlong.plot = 
+data_figs %>%
+  filter(!is.na(context)) %>%
+  ggplot(aes(x = context, fill = tvar)) +
+  geom_bar(position = "fill") +
+  ylab("") +
+  xlab("context") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(labels = scales::percent) +
+  facet_wrap(~vowel_length) +
+  theme(legend.title=element_blank(), legend.position="bottom")
+
 ## SOCIAL PLOTS ####
 age.plot =
   ggplot(data_figs, aes(x = AgeGroup, fill = tvar)) +
@@ -197,6 +255,40 @@ dev.off()
   scale_fill_brewer(palette = "Set1") +
   scale_y_continuous(labels = scales::percent) +
   theme(legend.title=element_blank(), legend.position="bottom")
+  
+#frequency
+data_figs_freq_tflap = 
+    data_figs %>%
+    group_by(frequency, tvar) %>%
+    summarise (n = n()) %>%
+    mutate(freq = n / sum(n)) %>%
+    group_by(tvar, frequency) %>%
+    summarise(freq = mean(freq)) %>%
+    filter(tvar == "flap")
+
+data_figs_freq_glottal = 
+  data_figs %>%
+  group_by(frequency, tvar) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  group_by(tvar, frequency) %>%
+  summarise(freq = mean(freq)) %>%
+  filter(tvar == "glottal")
+
+data_figs_freq = 
+  data_figs %>%
+  group_by(tvar, frequency, Speaker, Word) %>%
+  summarise (n = n()) %>%
+  mutate(freq = n / sum(n)) 
+#this won't work, need to get values as above
+ggplot(data_figs_freq_tflap, aes(x = frequency, y=freq)) +
+  geom_point() +
+  stat_smooth(colour="black")
+
+ggplot(data_figs_freq_glottal, aes(x = frequency, y=freq)) +
+  geom_point() +
+  stat_smooth(colour="black")
+
 
 #messing
 data_figs_age = data_figs %>%
@@ -240,6 +332,11 @@ intervocalic.position = data_clean %>%
 ggplot(data_figs, aes(x = context, fill = tvar)) +
   geom_bar(position = "fill") +
   scale_fill_brewer(palette = "Set1") +facet_wrap(~AgeGroup)
+
+ggplot(data_figs, aes(x = Occupation, fill = tvar)) +
+  geom_bar(position = "fill") +
+  scale_fill_brewer(palette = "Set1")
+
 
 ##  TRYING TO AVERAGE OVER SPEAKER AND WORD
 #this was Joe's solution

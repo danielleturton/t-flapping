@@ -17,6 +17,14 @@ syllabicwords = c("COTTON", "BUTTON", "BUTTONS", "LITTLE", "BOTTLE", "BOTTLEMEN"
 syllabicnwords = c("COTTON", "BUTTON", "BUTTONS", "RAWTENSTALL", "BRIGHTON", "((BUTTONS))")
 syllabiclwords = c("LITTLE", "BOTTLE", "BOTTLEMEN")
 
+#SUBTLEX
+#import
+SUBTLEX <- read.delim("/Users/danielle/Downloads/SUBTLEX-UK.txt")
+SUBTLEX <- SUBTLEX[,c("Spelling","FreqCount","BNC_freq", "LogFreq.Zipf.", "LogFreqBNC.Zipf.")]
+names(SUBTLEX)[names(SUBTLEX)=="Spelling"] <- "Word"
+names(SUBTLEX)[names(SUBTLEX)=="LogFreq.Zipf."] <- "frequency"
+SUBTLEX$Word = toupper(SUBTLEX$Word)
+
 ## WORDS TO CHANGE CATEGORY
 #checking which words have Preceding AA
 filter(data_clean, Pre_Seg == "AA") %>%
@@ -42,7 +50,8 @@ data_clean = data %>%
   select(24, 1, 21, 25:30, 3, 5, 11, 22, 14, 8, 31, 18, "Seg_Start") %>%
   mutate(AgeGroup = ifelse(Age < 34, "younger", "older")) %>%
   mutate(morphClass = factor(Code2, labels = c(NA, "bimorphemic", "monomorphemic"))) %>%
-  mutate(context = ifelse(Position == "End", "word-final prevoc", as.character(morphClass)))
+  mutate(context = ifelse(Position == "End", "word-final prevoc", as.character(morphClass))) %>%
+  left_join(SUBTLEX)
   
 
 #checking out flaps after long vowels:
