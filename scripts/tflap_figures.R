@@ -339,7 +339,6 @@ ggplot(data_figs, aes(x = Occupation, fill = tvar)) +
 
 
 ##  TRYING TO AVERAGE OVER SPEAKER AND WORD
-#this was Joe's solution
 # doesn't add quite up to 100 though, so just gonna do normal way I think
 data_figs_vowellength = 
   data_figs %>%
